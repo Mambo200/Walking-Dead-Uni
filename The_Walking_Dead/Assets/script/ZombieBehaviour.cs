@@ -2,10 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ZombieBehaviour : MonoBehaviour {
+public class ZombieBehaviour : MonoBehaviour
+{
 
+    [Tooltip("Speed of Zombie")]
     /// <summary>speed of Zombie</summary>
     public float m_ZombieSpeed;
+    [Tooltip("Distance the Zombie can see the Player")]
     /// <summary>Distance the Zombie can see the Player</summary
     public float m_ZombieFollowDistance;
 
@@ -20,19 +23,19 @@ public class ZombieBehaviour : MonoBehaviour {
     /// <summary>previous behaviour</summary>
     private string m_PreviousBehaviour;
     /// <summary>next behaviour, set next behaviour to Idle</summary>
-    private string m_NextBehaviour;  
+    private string m_NextBehaviour;
 
     // variables for Search Function
-    /// <summary>begins at 1, every Frame 'm_NextBehaviour = "Search"' goes up by 1, when it reaches 20, back to IdleBehaviour</summary>
-    private int search_Multiplier = 0;
+    /// <summary>Time Zombie is in Search state</summary>
+    private float search_TimeGone = 0;
 
-	void Awake ()
+    void Awake()
     {
         // get player
         m_Player = GameObject.FindGameObjectWithTag("Player");
-	}
+    }
 
-	// Use this for initialization
+    // Use this for initialization
     void Start()
     {
         // set next behaviour
@@ -40,8 +43,9 @@ public class ZombieBehaviour : MonoBehaviour {
     }
 
     // Update is called once per frame
-    void Update ()
+    void Update()
     {
+        Debug.Log(m_NextBehaviour);
         // check which behaviour is next
         switch (m_NextBehaviour)
         {
@@ -56,7 +60,7 @@ public class ZombieBehaviour : MonoBehaviour {
                 Haunt();
                 m_PreviousBehaviour = m_BehaviourHaunt;
                 break;
-            
+
             // Do Searching Behaviour
             case "Search":
                 Search();
@@ -91,11 +95,11 @@ public class ZombieBehaviour : MonoBehaviour {
     {
         // move Zombie in direction of Player
         this.transform.position = Vector3.MoveTowards
-            (
+        (
             this.transform.position,
             m_Player.transform.position,
             m_ZombieSpeed * Time.deltaTime
-            );
+        );
 
         // check and set next Behaviour
         if (Distance(m_ZombieFollowDistance / 2))
@@ -109,24 +113,30 @@ public class ZombieBehaviour : MonoBehaviour {
     /// </summary>
     void Search()
     {
-        // add 1 to multiplier
-        search_Multiplier++;
+        // add delteTime to multiplier
+        search_TimeGone += Time.deltaTime;
 
         // check multiplier
-        if (search_Multiplier <= 20)
+        if (search_TimeGone <= 5)
         {
             // search player
-            bool d = Distance((m_ZombieFollowDistance / 2) * 
-                ((m_ZombieFollowDistance / 2) * 0.1f * search_Multiplier));
+            bool d = Distance(m_ZombieFollowDistance * 0.6f);
+            // if player is in range
             if (d)
+            {
+                // set next behaviour to Haunt
                 m_NextBehaviour = m_BehaviourHaunt;
+                // reset multiplier
+                search_TimeGone = 0;
+            }
+            // if player is not in range
             else
                 m_NextBehaviour = m_BehaviourSearch;
         }
         else
         {
             // set search multiplier to 0
-            search_Multiplier = 0;
+            search_TimeGone = 0;
 
             // change to Idle Behaviour
             m_NextBehaviour = m_BehaviourIdle;
@@ -162,4 +172,10 @@ public class ZombieBehaviour : MonoBehaviour {
         else
             return false;
     }
+
+    void Move()
+    {
+        // mit Random Range einen Float Wert in transform.translate und so den Zombie random bewegen
+    }
+
 }
