@@ -8,5 +8,10 @@ public class PlayerCollision : MonoBehaviour {
     {
         if (other.tag == "Player")
             PlayerController.m_Dead = true;
+        else if (other.tag == "SaveZone")
+        {
+            GameObject o = GetComponentInParent<GameObject>();
+            Destroy(o);
+        }
     }
 }

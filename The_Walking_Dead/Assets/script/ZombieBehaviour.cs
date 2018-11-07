@@ -11,6 +11,9 @@ public class ZombieBehaviour : MonoBehaviour
     [Tooltip("Distance the Zombie can see the Player")]
     /// <summary>Distance the Zombie can see the Player</summary
     public float m_ZombieFollowDistance;
+    [Tooltip("Additional Zombie Speed. If set to 0 a random Rumber will added")]
+    /// <summary>additional Speed to Zombie (Calculaded in start)</summary>
+    public float m_AdditionalSpeed = 0;
 
     /// <summary>Player</summary>
     private GameObject m_Player;
@@ -24,13 +27,25 @@ public class ZombieBehaviour : MonoBehaviour
     private string m_PreviousBehaviour;
     /// <summary>next behaviour, set next behaviour to Idle</summary>
     private string m_NextBehaviour;
+    /// <summary>whether player can be found by zombies or not </summary>
+    private bool m_PlayerIsSave;
 
     // variables for Search Function
     /// <summary>Time Zombie is in Search state</summary>
     private float search_TimeGone = 0;
 
+    // variable for Move Function
+    /// <summary>let zombie move in opposite direction;  true -> moves to positive direction</summary>
+    private bool[] move_TurnXZ= new bool[2];
+
     void Awake()
     {
+        // inizialize move_TurnXY
+        for (int i = 0; i < move_TurnXZ.GetLength(0); i++)
+        {
+            move_TurnXZ[i] = false;
+        }
+
         // get player
         m_Player = GameObject.FindGameObjectWithTag("Player");
     }
@@ -38,6 +53,12 @@ public class ZombieBehaviour : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        // Set additional Zombie Speed
+        // If Additional speed = 0, set random number
+        if (m_AdditionalSpeed == 0)
+            m_AdditionalSpeed = Random.Range(1, 5);
+
+
         // set next behaviour
         m_NextBehaviour = m_BehaviourIdle;
     }
@@ -45,7 +66,9 @@ public class ZombieBehaviour : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.Log(m_NextBehaviour);
+        // update Player Save State
+        m_PlayerIsSave = PlayerSaveState();
+
         // check which behaviour is next
         switch (m_NextBehaviour)
         {
@@ -74,6 +97,7 @@ public class ZombieBehaviour : MonoBehaviour
         }
     }
 
+
     // ----- Behaviours --- \\
 
     /// <summary>
@@ -81,6 +105,11 @@ public class ZombieBehaviour : MonoBehaviour
     /// </summary>
     void Idle()
     {
+        Move();
+        // when player is in save area return
+        if (m_PlayerIsSave)
+            return;
+
         // looking for player
         if (Distance(m_ZombieFollowDistance / 2))
             m_NextBehaviour = m_BehaviourHaunt;
@@ -93,12 +122,19 @@ public class ZombieBehaviour : MonoBehaviour
     /// </summary>
     void Haunt()
     {
-        // move Zombie in direction of Player
+        // if player is in save area set behaviour to search
+        if (m_PlayerIsSave)
+        {
+            m_NextBehaviour = m_BehaviourSearch;
+            return;
+        }
+
+        // move Zombie in direction of Player   
         this.transform.position = Vector3.MoveTowards
         (
             this.transform.position,
             m_Player.transform.position,
-            m_ZombieSpeed * Time.deltaTime
+            m_ZombieSpeed * 1.1f * Time.deltaTime
         );
 
         // check and set next Behaviour
@@ -119,6 +155,10 @@ public class ZombieBehaviour : MonoBehaviour
         // check multiplier
         if (search_TimeGone <= 5)
         {
+            // check if player is in save zone
+            if (m_PlayerIsSave)
+                return;
+
             // search player
             bool d = Distance(m_ZombieFollowDistance * 0.6f);
             // if player is in range
@@ -176,6 +216,45 @@ public class ZombieBehaviour : MonoBehaviour
     void Move()
     {
         // mit Random Range einen Float Wert in transform.translate und so den Zombie random bewegen
+
+        float moveX = m_ZombieSpeed * Time.deltaTime;
+        float moveZ = m_ZombieSpeed * Time.deltaTime;
+
+        // check x coordinate
+        if (this.gameObject.transform.position.x < -95f)
+            move_TurnXZ[0] = true;
+        else if (this.gameObject.transform.position.x > 95f)
+            move_TurnXZ[0] = false;
+
+        // check z coordinate
+        if (this.gameObject.transform.position.z < -95f)
+            move_TurnXZ[1] = true;
+        else if (this.gameObject.transform.position.z > 95f)
+            move_TurnXZ[1] = false;
+
+        // if move_TurnXZ is false set move variables to negative
+        if (!move_TurnXZ[0])
+            moveX = -moveX;
+        if (!move_TurnXZ[1])
+            moveZ = -moveZ;
+
+        // move Zombie
+        this.gameObject.transform.Translate(new Vector3(
+            moveX,
+            0,
+            moveZ
+            ));
     }
 
+    /// <summary>
+    /// check if player is in savezone or won the game
+    /// </summary>
+    /// <returns>player save state</returns>
+    private bool PlayerSaveState()
+    {
+        if (PlayerController.m_Save || PlayerController.m_Dead)
+            return true;
+        else
+            return false;
+    }
 }
