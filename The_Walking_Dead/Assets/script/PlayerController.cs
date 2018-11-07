@@ -20,12 +20,15 @@ public class PlayerController : MonoBehaviour {
     private float m_Vertical;
     /// <summary>Mouse X input</summary>
     private float m_RotationY;
+    /// <summary>when Player is in Save Zone m_Save is true</summary>
+    public static bool m_Save = false;
 
+    private CharacterController m_CharacterController;
 
     // Use this for initialization
     void Start ()
     {
-		
+        m_CharacterController = this.gameObject.GetComponent<CharacterController>();
 	}
 	
 	// Update is called once per frame
@@ -61,13 +64,18 @@ public class PlayerController : MonoBehaviour {
     /// <param name="_vertical">vertical input</param>
     void Move(float _horizontal, float _vertical)
     {
+        Vector3 v = new Vector3();
         float speed = m_Speed * Time.deltaTime;
-        this.gameObject.transform.Translate(
-            new Vector3(
-                _horizontal * speed * Run(),
-                0,
-                _vertical * speed * Run())
-                );
+        // set vector
+        v.x = _horizontal;
+        v.z = _vertical;
+
+        // multiply by speed and Run
+        v = (v.normalized * speed * Run());
+        // transform from world into local space
+        v = transform.TransformDirection(v);
+        // move player
+        m_CharacterController.Move(v);
     }
 
     /// <summary>
@@ -79,9 +87,12 @@ public class PlayerController : MonoBehaviour {
         /// <summary>if left shift is pressed = 1, if not = 0</summary>
         float run = Input.GetAxis("Fire3");
 
+        // check if button is pressed
         if (run > 0)
+            // run
             return run * 1.5f;
         else
+            // walk
             return 1;
     }
 
@@ -94,5 +105,32 @@ public class PlayerController : MonoBehaviour {
             gameObject.transform.eulerAngles.z
             );
 
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.tag == "Finish")
+        {
+            m_Save = true;
+        }
+        else if (other.gameObject.tag == "SaveZone")
+        {
+            m_Save = true;
+        }
+    }
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.tag == "SaveZone")
+        {
+            m_Save = false;
+        }
+    }
+
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.gameObject.tag == "SaveZone")
+        {
+            m_Save = true;
+        }
     }
 }
