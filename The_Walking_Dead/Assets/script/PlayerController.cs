@@ -7,6 +7,12 @@ public class PlayerController : MonoBehaviour {
     [HideInInspector]
     /// <summary>if player collides with Zombie -> Dead = true</summary>
     public static bool m_Dead = false;
+    [HideInInspector]
+    /// <summary>when Player is in Save Zone m_Save is true</summary>
+    public static bool m_Save = false;
+    [HideInInspector]
+    /// <summary>when Player reached finish</summar>
+    public static bool m_Won = false;
 
     [Tooltip("player walk speed")]
     /// <summary>player walk speed</summary>
@@ -20,8 +26,6 @@ public class PlayerController : MonoBehaviour {
     private float m_Vertical;
     /// <summary>Mouse X input</summary>
     private float m_RotationY;
-    /// <summary>when Player is in Save Zone m_Save is true</summary>
-    public static bool m_Save = false;
 
     private CharacterController m_CharacterController;
 
@@ -34,6 +38,11 @@ public class PlayerController : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
     {
+        Debug.Log(m_Won);
+        // if player is dead or won return
+        if (m_Dead || m_Won)
+            return;
+
         // Move
         // get Axis input
         m_Horizontal = Input.GetAxis("Horizontal");
@@ -47,7 +56,7 @@ public class PlayerController : MonoBehaviour {
         Rotate();
     }
 
-    // ------------- \\
+    // ------------------------------------------------------------------------------------------- \\
 
     /// <summary>
     /// Move Character
@@ -96,6 +105,9 @@ public class PlayerController : MonoBehaviour {
             return 1;
     }
 
+    /// <summary>
+    /// Rotate Player
+    /// </summary>
     void Rotate()
     {
         float y = this.transform.eulerAngles.y + (m_RotationY * m_RotSpeed);
@@ -107,30 +119,52 @@ public class PlayerController : MonoBehaviour {
 
     }
 
+    #region Public Static Functions
+    /// <summary>
+    /// check if player is in savezone, won the game or died
+    /// </summary>
+    /// <returns>Player save state</returns>
+    public static bool PlayerSave()
+    {
+        // if player is not in savezone, not dead or did not won the game return true
+        if (m_Save || m_Dead || m_Won)
+            return true;
+        else
+            return false;
+    }
+
+    /// <summary>
+    /// check if game is over either win or lose
+    /// </summary>
+    /// <returns>player game over state</returns>
+    public static bool GameOver()
+    {
+        if (m_Dead || m_Won)
+            return true;
+        else
+            return false;
+    }
+    #endregion
+
+    #region Trigger Events
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.tag == "Finish")
-        {
-            m_Save = true;
-        }
-        else if (other.gameObject.tag == "SaveZone")
-        {
-            m_Save = true;
-        }
-    }
-    private void OnTriggerExit(Collider other)
-    {
         if (other.gameObject.tag == "SaveZone")
-        {
-            m_Save = false;
-        }
+            m_Save = true;
+        else if (other.gameObject.tag == "Finish")
+            m_Won = true;
     }
 
     private void OnTriggerStay(Collider other)
     {
         if (other.gameObject.tag == "SaveZone")
-        {
             m_Save = true;
-        }
     }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.tag == "SaveZone")
+            m_Save = false;
+    }
+    #endregion
 }

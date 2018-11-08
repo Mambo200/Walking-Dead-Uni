@@ -66,8 +66,12 @@ public class ZombieBehaviour : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // if player is dead stop Zombie movement
+        if (PlayerController.GameOver())
+            return;
+
         // update Player Save State
-        m_PlayerIsSave = PlayerSaveState();
+        m_PlayerIsSave = PlayerController.PlayerSave();
 
         // check which behaviour is next
         switch (m_NextBehaviour)
@@ -97,8 +101,9 @@ public class ZombieBehaviour : MonoBehaviour
         }
     }
 
+    // ------------------------------------------------------------------------------------------- \\
 
-    // ----- Behaviours --- \\
+    #region Behaviours
 
     /// <summary>
     /// Idle Behaviour, Stands still and looking for player
@@ -183,7 +188,7 @@ public class ZombieBehaviour : MonoBehaviour
         }
     }
 
-    // -------- //
+    #endregion
 
     /// <summary>
     /// calculate x- and z-Distance between player and zombie
@@ -244,17 +249,5 @@ public class ZombieBehaviour : MonoBehaviour
             0,
             moveZ
             ));
-    }
-
-    /// <summary>
-    /// check if player is in savezone or won the game
-    /// </summary>
-    /// <returns>player save state</returns>
-    private bool PlayerSaveState()
-    {
-        if (PlayerController.m_Save || PlayerController.m_Dead)
-            return true;
-        else
-            return false;
     }
 }
