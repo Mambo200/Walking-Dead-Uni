@@ -14,21 +14,28 @@ public class ZombieBehaviour : MonoBehaviour
     [Tooltip("Additional Zombie Speed. If set to 0 a random Rumber will added")]
     /// <summary>additional Speed to Zombie (Calculaded in start)</summary>
     public float m_AdditionalSpeed = 0;
+    [Tooltip("Material to show current Behaviour. 0 = Idle, 1 = Haunt, 2 = Search")]
+    /// <summary>Material to show current Behaviour. 0 = Idle, 1 = Haunt, 2 = Search</summary>
+    public Material[] m_ZombieColor;
 
     /// <summary>Player</summary>
     private GameObject m_Player;
-    /// <summary>Idle Behaviour String, DO NOT CHANGE!</summary>
-    private string m_BehaviourIdle = "Idle";
-    /// <summary>Haunt Behaviour String, DO NOT CHANGE!</summary>
-    private string m_BehaviourHaunt = "Haunt";
-    /// <summary>Search Behaviour String, DO NOT CHANGE!</summary>
-    private string m_BehaviourSearch = "Search";
+    /// <summary>Idle Behaviour String</summary>
+    private string mP_BehaviourIdle { get { return "Idle"; } }
+    /// <summary>Haunt Behaviour String</summary>
+    private string mP_BehaviourHaunt { get { return "Haunt"; } }
+    /// <summary>Search Behaviour String</summary>
+    private string mP_BehaviourSearch { get { return "Search"; } }
     /// <summary>previous behaviour</summary>
     private string m_PreviousBehaviour;
     /// <summary>next behaviour, set next behaviour to Idle</summary>
     private string m_NextBehaviour;
     /// <summary>whether player can be found by zombies or not </summary>
     private bool m_PlayerIsSave;
+    /// <summary>Body of Gameobject</summary>
+    private GameObject m_Body;
+    /// <summary>Material of Body</summary>
+    private Material m_Material;
 
     // variables for Search Function
     /// <summary>Time Zombie is in Search state</summary>
@@ -40,6 +47,11 @@ public class ZombieBehaviour : MonoBehaviour
 
     void Awake()
     {
+        // get body of Zombie
+        m_Body = this.transform.GetChild(0).gameObject;
+        // get material ob Body
+        m_Material = m_Body.GetComponent<Renderer>().material; 
+
         // inizialize move_TurnXY
         for (int i = 0; i < move_TurnXZ.GetLength(0); i++)
         {
@@ -60,7 +72,7 @@ public class ZombieBehaviour : MonoBehaviour
 
 
         // set next behaviour
-        m_NextBehaviour = m_BehaviourIdle;
+        m_NextBehaviour = mP_BehaviourIdle;
     }
 
     // Update is called once per frame
@@ -79,19 +91,20 @@ public class ZombieBehaviour : MonoBehaviour
             // Play Idle behaviour
             case "Idle":
                 Idle();
-                m_PreviousBehaviour = m_BehaviourIdle;
+                m_PreviousBehaviour = mP_BehaviourIdle;
                 break;
 
             // Do Hauning behaviour
             case "Haunt":
                 Haunt();
-                m_PreviousBehaviour = m_BehaviourHaunt;
+                m_PreviousBehaviour = mP_BehaviourHaunt;
                 break;
 
             // Do Searching Behaviour
             case "Search":
+//                this.GetComponent<Renderer>().material.CopyPropertiesFromMaterial(m_Material[1]);
                 Search();
-                m_PreviousBehaviour = m_BehaviourSearch;
+                m_PreviousBehaviour = mP_BehaviourSearch;
                 break;
 
             // m_NextBehaviour was set wrong
@@ -110,6 +123,10 @@ public class ZombieBehaviour : MonoBehaviour
     /// </summary>
     void Idle()
     {
+        // Change Material
+        if (m_PreviousBehaviour != mP_BehaviourIdle)
+            ChangeColor(0);
+
         Move();
         // when player is in save area return
         if (m_PlayerIsSave)
@@ -117,9 +134,9 @@ public class ZombieBehaviour : MonoBehaviour
 
         // looking for player
         if (Distance(m_ZombieFollowDistance / 2))
-            m_NextBehaviour = m_BehaviourHaunt;
+            m_NextBehaviour = mP_BehaviourHaunt;
         else
-            m_NextBehaviour = m_BehaviourIdle;
+            m_NextBehaviour = mP_BehaviourIdle;
     }
 
     /// <summary>
@@ -127,10 +144,14 @@ public class ZombieBehaviour : MonoBehaviour
     /// </summary>
     void Haunt()
     {
+        // Change Material
+        if (m_PreviousBehaviour != mP_BehaviourHaunt)
+            ChangeColor(1);
+
         // if player is in save area set behaviour to search
         if (m_PlayerIsSave)
         {
-            m_NextBehaviour = m_BehaviourSearch;
+            m_NextBehaviour = mP_BehaviourSearch;
             return;
         }
 
@@ -144,9 +165,9 @@ public class ZombieBehaviour : MonoBehaviour
 
         // check and set next Behaviour
         if (Distance(m_ZombieFollowDistance / 2))
-            m_NextBehaviour = m_BehaviourHaunt;
+            m_NextBehaviour = mP_BehaviourHaunt;
         else
-            m_NextBehaviour = m_BehaviourSearch;
+            m_NextBehaviour = mP_BehaviourSearch;
     }
 
     /// <summary>
@@ -154,6 +175,10 @@ public class ZombieBehaviour : MonoBehaviour
     /// </summary>
     void Search()
     {
+        // Change Material
+        if (m_PreviousBehaviour != mP_BehaviourSearch)
+            ChangeColor(2);
+
         // add delteTime to multiplier
         search_TimeGone += Time.deltaTime;
 
@@ -170,13 +195,13 @@ public class ZombieBehaviour : MonoBehaviour
             if (d)
             {
                 // set next behaviour to Haunt
-                m_NextBehaviour = m_BehaviourHaunt;
+                m_NextBehaviour = mP_BehaviourHaunt;
                 // reset multiplier
                 search_TimeGone = 0;
             }
             // if player is not in range
             else
-                m_NextBehaviour = m_BehaviourSearch;
+                m_NextBehaviour = mP_BehaviourSearch;
         }
         else
         {
@@ -184,7 +209,7 @@ public class ZombieBehaviour : MonoBehaviour
             search_TimeGone = 0;
 
             // change to Idle Behaviour
-            m_NextBehaviour = m_BehaviourIdle;
+            m_NextBehaviour = mP_BehaviourIdle;
         }
     }
 
@@ -193,13 +218,11 @@ public class ZombieBehaviour : MonoBehaviour
     /// <summary>
     /// calculate x- and z-Distance between player and zombie
     /// </summary>
-    /// <returns>Distance as Vector3</returns>
-    Vector3 Distance()
+    /// <returns>Distance as square float</returns>
+    float Distance()
     {
-        Vector3 distance = new Vector3();
-        distance.x = Mathf.Abs(m_Player.transform.position.x) - Mathf.Abs(this.transform.position.x);
-        distance.z = Mathf.Abs(m_Player.transform.position.z) - Mathf.Abs(this.transform.position.z);
-
+        float distance;
+        distance = Vector3.SqrMagnitude(m_Player.transform.position - this.transform.position);
         return distance;
     }
 
@@ -210,9 +233,8 @@ public class ZombieBehaviour : MonoBehaviour
     /// <returns>if player is in area --> true</returns>
     bool Distance(float _distance)
     {
-        Vector3 distance = Distance();
-        if ((distance.x >= -_distance && distance.x <= _distance) &&
-           (distance.z >= -_distance && distance.z <= _distance))
+        float distance = Distance();
+        if (distance <= _distance * _distance)
             return true;
         else
             return false;
@@ -249,5 +271,21 @@ public class ZombieBehaviour : MonoBehaviour
             0,
             moveZ
             ));
+    }
+
+    /// <summary>
+    /// Change Color of Body
+    /// </summary>
+    /// <param name="_index">0 = Idle, 1 = Haunt, 2 = Search</param>
+    private void ChangeColor(int _index)
+    {
+        
+        
+        // check if index is right
+        if(_index >= 0 && _index < m_ZombieColor.GetLength(0))
+            // change color
+            m_Material.CopyPropertiesFromMaterial(m_ZombieColor[_index]);
+        
+         
     }
 }

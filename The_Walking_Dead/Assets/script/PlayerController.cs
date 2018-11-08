@@ -32,13 +32,13 @@ public class PlayerController : MonoBehaviour {
     // Use this for initialization
     void Start ()
     {
+        Cursor.lockState = CursorLockMode.Locked;
         m_CharacterController = this.gameObject.GetComponent<CharacterController>();
 	}
 	
 	// Update is called once per frame
 	void Update ()
     {
-        Debug.Log(m_Won);
         // if player is dead or won return
         if (m_Dead || m_Won)
             return;
@@ -144,6 +144,19 @@ public class PlayerController : MonoBehaviour {
         else
             return false;
     }
+
+    /// <summary>
+    /// Set values to default
+    /// </summary>
+    public static void Reload()
+    {
+        // set savestates to false
+        m_Save = false;
+        m_Dead = false;
+        m_Won = false;
+        // change UI Text
+        ChangeText.ChangeTextBox("", Color.white);
+    }
     #endregion
 
     #region Trigger Events
@@ -152,7 +165,10 @@ public class PlayerController : MonoBehaviour {
         if (other.gameObject.tag == "SaveZone")
             m_Save = true;
         else if (other.gameObject.tag == "Finish")
+        {
             m_Won = true;
+            ChangeText.ChangeTextBox(ChangeText.mP_TextWin, Color.green);
+        }
     }
 
     private void OnTriggerStay(Collider other)
@@ -167,4 +183,5 @@ public class PlayerController : MonoBehaviour {
             m_Save = false;
     }
     #endregion
+
 }
