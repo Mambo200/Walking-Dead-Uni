@@ -20,11 +20,18 @@ public class CameraRotation : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
     {
+        // if player dies or won return
+        if (PlayerController.GameOver())
+            return;
+
+        // get mouse axis input
         MouseY = Input.GetAxis("Mouse Y");
+
+        // set camera function
         SetCameraRotation();
     }
 
-    // -------- \\
+    // ------------------------------------------------------------------------------------------- \\
     /// <summary>
     /// Set Camera Rotation
     /// </summary>

@@ -21,11 +21,19 @@ public class SpawnZombies : MonoBehaviour {
         if (m_SpawnZombies)
         {
             // spawn enemies
-            for (int x = -90; x <= 90; x += 30)
+            for (int x = 0; x < 8; x ++)
             {
-                for (int z = -60; z <= 90; z += 30)
+                for (int z = 0; z < 7; z ++)
                 {
-                    Instantiate(m_Zombie, new Vector3(x, 3, z), new Quaternion(), this.transform);
+                    Instantiate(
+                        m_Zombie,
+                        new Vector3(
+                            Random.Range(-90,90),
+                            3,
+                            Random.Range(-60, 90)
+                            ),
+                        new Quaternion(),
+                        this.transform);
                 }
             }
         }
@@ -34,7 +42,7 @@ public class SpawnZombies : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
     {
-        if (!m_SpawnZombies)
+        if (!m_SpawnZombies || PlayerController.GameOver())
             return;
         //copy delta time value to variable
         float deltaTime = Time.deltaTime;
@@ -62,4 +70,7 @@ public class SpawnZombies : MonoBehaviour {
             m_TimeGone = 0;
         }
 	}
+    
+    // ------------------------------------------------------------------------------------------- \\
+
 }
