@@ -6,19 +6,16 @@ using UnityEngine.UI;
 public class ChangeText : MonoBehaviour {
 
     /// <summary>Dead Text</summary>
-    public static string mP_TextDead {get { return ("YOU ARE DEAD"); } }
+    public static string TextDead {get { return ("YOU ARE DEAD"); } }
     /// <summary>Win Text</summary>
-    public static string mP_TextWin {get { return ("YOU REACHED THE FINISH LINE"); } }
+    public static string TextWin {get { return ("YOU REACHED THE FINISH LINE"); } }
     /// <summary>Gameobject of Text</summary>
-    public static GameObject mP_WinDeadText {get { return GameObject.Find("WinDieText"); } }
+    public static GameObject WinDeadText {get { return GameObject.Find("WinDieText"); } }
 
 	// Use this for initialization
 	void Start ()
     {
-        //// get gameobject
-        //m_WinDeadText = GameObject.Find("WinDieText");
-        // set color to default
-        mP_WinDeadText.GetComponent<Text>().color = Color.white;
+        WinDeadText.GetComponent<Text>().color = Color.white;
     }
 
     /// <summary>
@@ -27,7 +24,7 @@ public class ChangeText : MonoBehaviour {
     /// <param name="_text">Text</param>
     public static void ChangeTextBox(string _text, Color _color)
     {
-        mP_WinDeadText.GetComponent<Text>().color = _color;
-        mP_WinDeadText.GetComponent<Text>().text = _text + "\nPress R to reload";
+        WinDeadText.GetComponent<Text>().color = _color;
+        WinDeadText.GetComponent<Text>().text = _text + "\nPress R to reload";
     }
 }

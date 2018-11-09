@@ -10,12 +10,6 @@ public class CameraRotation : MonoBehaviour {
 
     /// <summary>cursor movement</summary>
     private float MouseY;
-
-    // Use this for initialization
-    void Start ()
-    {
-		
-	}
 	
 	// Update is called once per frame
 	void Update ()
@@ -25,10 +19,14 @@ public class CameraRotation : MonoBehaviour {
             return;
 
         // get mouse axis input
-        MouseY = Input.GetAxis("Mouse Y");
+        MouseY = Input.GetAxis("Mouse Y") * Time.deltaTime *m_RotSpeedX;
 
-        // set camera function
-        SetCameraRotation();
+        // check cursor state
+        if (Cursor.lockState == CursorLockMode.Locked)
+        {
+            // set camera function
+            SetCameraRotation();
+        }
     }
 
     // ------------------------------------------------------------------------------------------- \\
