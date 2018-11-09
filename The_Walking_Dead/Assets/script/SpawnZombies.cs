@@ -29,7 +29,7 @@ public class SpawnZombies : MonoBehaviour {
                         m_Zombie,
                         new Vector3(
                             Random.Range(-90,90),
-                            3,
+                            2f,
                             Random.Range(-60, 90)
                             ),
                         new Quaternion(),

@@ -44,6 +44,8 @@ public class ZombieBehaviour : MonoBehaviour
     // variable for Move Function
     /// <summary>let zombie move in opposite direction;  true -> moves to positive direction</summary>
     private bool[] move_TurnXZ= new bool[2];
+    /// <summary>Time gone since lase save</summary>
+    private float move_SaveTime = 0;
 
     void Awake()
     {
@@ -102,7 +104,6 @@ public class ZombieBehaviour : MonoBehaviour
 
             // Do Searching Behaviour
             case "Search":
-//                this.GetComponent<Renderer>().material.CopyPropertiesFromMaterial(m_Material[1]);
                 Search();
                 m_PreviousBehaviour = mP_BehaviourSearch;
                 break;
@@ -215,6 +216,7 @@ public class ZombieBehaviour : MonoBehaviour
 
     #endregion
 
+    #region calculaton
     /// <summary>
     /// calculate x- and z-Distance between player and zombie
     /// </summary>
@@ -240,6 +242,23 @@ public class ZombieBehaviour : MonoBehaviour
             return false;
     }
 
+    /// <summary>
+    /// get random bool
+    /// </summary>
+    /// <returns>random bool</returns>
+    private bool RandomBool()
+    {
+        float rndNr = Random.Range(0, 2);
+        if (rndNr == 0)
+            return false;
+        else
+            return true;
+    }
+    #endregion
+
+    /// <summary>
+    /// Move Zombie
+    /// </summary>
     void Move()
     {
         // mit Random Range einen Float Wert in transform.translate und so den Zombie random bewegen
@@ -259,6 +278,18 @@ public class ZombieBehaviour : MonoBehaviour
         else if (this.gameObject.transform.position.z > 95f)
             move_TurnXZ[1] = false;
 
+        // change directions random
+        move_SaveTime += Time.deltaTime;
+        if(move_SaveTime >= 5)
+        {
+            for (int i = 0; i < move_TurnXZ.GetLength(0); i++)
+            {
+                move_TurnXZ[i] = RandomBool();
+            }
+
+            // reset time
+            move_SaveTime = 0;
+        }
         // if move_TurnXZ is false set move variables to negative
         if (!move_TurnXZ[0])
             moveX = -moveX;
@@ -279,13 +310,10 @@ public class ZombieBehaviour : MonoBehaviour
     /// <param name="_index">0 = Idle, 1 = Haunt, 2 = Search</param>
     private void ChangeColor(int _index)
     {
-        
-        
         // check if index is right
         if(_index >= 0 && _index < m_ZombieColor.GetLength(0))
             // change color
             m_Material.CopyPropertiesFromMaterial(m_ZombieColor[_index]);
-        
-         
     }
+
 }

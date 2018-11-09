@@ -58,8 +58,12 @@ public class PlayerController : MonoBehaviour {
         // set input
         Move();
 
-        // Rotate
-        Rotate();
+        // check cursor lock state
+        if (Cursor.lockState == CursorLockMode.Locked)
+        {
+            // Rotate
+            Rotate();
+        }
     }
 
     // ------------------------------------------------------------------------------------------- \\
