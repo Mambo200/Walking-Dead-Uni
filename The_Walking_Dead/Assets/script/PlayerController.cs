@@ -58,12 +58,8 @@ public class PlayerController : MonoBehaviour {
         // set input
         Move();
 
-        // check cursor lock state
-        if (Cursor.lockState == CursorLockMode.Locked)
-        {
-            // Rotate
-            Rotate();
-        }
+        // Rotate
+        Rotate();
     }
 
     // ------------------------------------------------------------------------------------------- \\
@@ -128,7 +124,11 @@ public class PlayerController : MonoBehaviour {
     /// </summary>
     void Rotate()
     {
-        float y = this.transform.eulerAngles.y + (m_RotationY * m_RotSpeed);
+        // if cursor not locked return
+        if (Cursor.lockState != CursorLockMode.Locked)
+            return;
+
+            float y = this.transform.eulerAngles.y + (m_RotationY * m_RotSpeed * Time.deltaTime);
         this.gameObject.transform.eulerAngles = new Vector3(
             gameObject.transform.eulerAngles.x,
             y,
@@ -185,7 +185,7 @@ public class PlayerController : MonoBehaviour {
         else if (other.gameObject.tag == "Finish")
         {
             m_Won = true;
-            ChangeText.ChangeTextBox(ChangeText.mP_TextWin, Color.green);
+            ChangeText.ChangeTextBox(ChangeText.TextWin, Color.green);
         }
     }
 

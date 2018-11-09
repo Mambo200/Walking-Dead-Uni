@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class SpawnZombies : MonoBehaviour {
 
+    [Tooltip("How many Zombies spawn in total. Default = 40")]
+    /// <summary>total number of zombies spawning</summary>
+    public int m_ZombieAmount = 40;
     [Tooltip("true -> Zombies will spawn")]
     ///<summary>Zombies spawn switch</summary>
     public bool m_SpawnZombies = true;
@@ -21,20 +24,9 @@ public class SpawnZombies : MonoBehaviour {
         if (m_SpawnZombies)
         {
             // spawn enemies
-            for (int x = 0; x < 8; x ++)
+            for (int x = 0; x < m_ZombieAmount; x++)
             {
-                for (int z = 0; z < 7; z ++)
-                {
-                    Instantiate(
-                        m_Zombie,
-                        new Vector3(
-                            Random.Range(-90,90),
-                            2f,
-                            Random.Range(-60, 90)
-                            ),
-                        new Quaternion(),
-                        this.transform);
-                }
+                SpawnZombie();
             }
         }
 	}
@@ -53,18 +45,7 @@ public class SpawnZombies : MonoBehaviour {
         if (m_TimeGone >= 1f && deltaTime < 0.02f)
         {
             // spawn enemy at random position
-            Instantiate
-            (
-                m_Zombie,
-                new Vector3
-                    (
-                    Random.Range(-90, 90),
-                    3,
-                    Random.Range(-90,90)
-                    ), 
-                new Quaternion(),
-                this.transform
-            );
+            SpawnZombie();
 
             // set Time Gone back to 0
             m_TimeGone = 0;
@@ -73,4 +54,16 @@ public class SpawnZombies : MonoBehaviour {
     
     // ------------------------------------------------------------------------------------------- \\
 
+    private void SpawnZombie()
+    {
+        Instantiate(
+                    m_Zombie,                   // prefab
+                    new Vector3(                // Position
+                        Random.Range(-90, 90),      // x position
+                        2f,                         // y position
+                        Random.Range(-60, 90)       // z position
+                        ),
+                    new Quaternion(),           // Rotation
+                    this.transform);            // parent
+    }
 }

@@ -19,7 +19,7 @@ public class CameraRotation : MonoBehaviour {
             return;
 
         // get mouse axis input
-        MouseY = Input.GetAxis("Mouse Y");
+        MouseY = Input.GetAxis("Mouse Y") * Time.deltaTime *m_RotSpeedX;
 
         // check cursor state
         if (Cursor.lockState == CursorLockMode.Locked)

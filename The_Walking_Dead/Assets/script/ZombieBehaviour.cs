@@ -21,11 +21,11 @@ public class ZombieBehaviour : MonoBehaviour
     /// <summary>Player</summary>
     private GameObject m_Player;
     /// <summary>Idle Behaviour String</summary>
-    private string mP_BehaviourIdle { get { return "Idle"; } }
+    private string BehaviourIdle { get { return "Idle"; } }
     /// <summary>Haunt Behaviour String</summary>
-    private string mP_BehaviourHaunt { get { return "Haunt"; } }
+    private string BehaviourHaunt { get { return "Haunt"; } }
     /// <summary>Search Behaviour String</summary>
-    private string mP_BehaviourSearch { get { return "Search"; } }
+    private string BehaviourSearch { get { return "Search"; } }
     /// <summary>previous behaviour</summary>
     private string m_PreviousBehaviour;
     /// <summary>next behaviour, set next behaviour to Idle</summary>
@@ -74,7 +74,7 @@ public class ZombieBehaviour : MonoBehaviour
 
 
         // set next behaviour
-        m_NextBehaviour = mP_BehaviourIdle;
+        m_NextBehaviour = BehaviourIdle;
     }
 
     // Update is called once per frame
@@ -93,19 +93,19 @@ public class ZombieBehaviour : MonoBehaviour
             // Play Idle behaviour
             case "Idle":
                 Idle();
-                m_PreviousBehaviour = mP_BehaviourIdle;
+                m_PreviousBehaviour = BehaviourIdle;
                 break;
 
             // Do Hauning behaviour
             case "Haunt":
                 Haunt();
-                m_PreviousBehaviour = mP_BehaviourHaunt;
+                m_PreviousBehaviour = BehaviourHaunt;
                 break;
 
             // Do Searching Behaviour
             case "Search":
                 Search();
-                m_PreviousBehaviour = mP_BehaviourSearch;
+                m_PreviousBehaviour = BehaviourSearch;
                 break;
 
             // m_NextBehaviour was set wrong
@@ -125,7 +125,7 @@ public class ZombieBehaviour : MonoBehaviour
     void Idle()
     {
         // Change Material
-        if (m_PreviousBehaviour != mP_BehaviourIdle)
+        if (m_PreviousBehaviour != BehaviourIdle)
             ChangeColor(0);
 
         Move();
@@ -135,9 +135,9 @@ public class ZombieBehaviour : MonoBehaviour
 
         // looking for player
         if (Distance(m_ZombieFollowDistance / 2))
-            m_NextBehaviour = mP_BehaviourHaunt;
+            m_NextBehaviour = BehaviourHaunt;
         else
-            m_NextBehaviour = mP_BehaviourIdle;
+            m_NextBehaviour = BehaviourIdle;
     }
 
     /// <summary>
@@ -146,13 +146,13 @@ public class ZombieBehaviour : MonoBehaviour
     void Haunt()
     {
         // Change Material
-        if (m_PreviousBehaviour != mP_BehaviourHaunt)
+        if (m_PreviousBehaviour != BehaviourHaunt)
             ChangeColor(1);
 
         // if player is in save area set behaviour to search
         if (m_PlayerIsSave)
         {
-            m_NextBehaviour = mP_BehaviourSearch;
+            m_NextBehaviour = BehaviourSearch;
             return;
         }
 
@@ -166,9 +166,9 @@ public class ZombieBehaviour : MonoBehaviour
 
         // check and set next Behaviour
         if (Distance(m_ZombieFollowDistance / 2))
-            m_NextBehaviour = mP_BehaviourHaunt;
+            m_NextBehaviour = BehaviourHaunt;
         else
-            m_NextBehaviour = mP_BehaviourSearch;
+            m_NextBehaviour = BehaviourSearch;
     }
 
     /// <summary>
@@ -177,7 +177,7 @@ public class ZombieBehaviour : MonoBehaviour
     void Search()
     {
         // Change Material
-        if (m_PreviousBehaviour != mP_BehaviourSearch)
+        if (m_PreviousBehaviour != BehaviourSearch)
             ChangeColor(2);
 
         // add delteTime to multiplier
@@ -196,13 +196,13 @@ public class ZombieBehaviour : MonoBehaviour
             if (d)
             {
                 // set next behaviour to Haunt
-                m_NextBehaviour = mP_BehaviourHaunt;
+                m_NextBehaviour = BehaviourHaunt;
                 // reset multiplier
                 search_TimeGone = 0;
             }
             // if player is not in range
             else
-                m_NextBehaviour = mP_BehaviourSearch;
+                m_NextBehaviour = BehaviourSearch;
         }
         else
         {
@@ -210,7 +210,7 @@ public class ZombieBehaviour : MonoBehaviour
             search_TimeGone = 0;
 
             // change to Idle Behaviour
-            m_NextBehaviour = mP_BehaviourIdle;
+            m_NextBehaviour = BehaviourIdle;
         }
     }
 
@@ -296,7 +296,7 @@ public class ZombieBehaviour : MonoBehaviour
         if (!move_TurnXZ[1])
             moveZ = -moveZ;
 
-        // move Zombie
+        // move Zombie 
         this.gameObject.transform.Translate(new Vector3(
             moveX,
             0,
