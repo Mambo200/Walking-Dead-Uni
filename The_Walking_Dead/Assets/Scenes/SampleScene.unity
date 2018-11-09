@@ -863,7 +863,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf0266ef863fa8d498ab60933ac97d04, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_ZombieAmount: 40
+  m_ZombieAmount: 60
   m_SpawnZombies: 1
   m_Zombie: {fileID: 1934792238991654, guid: e9cbeb30f121fe84c8eb536efdc9e9bf, type: 2}
 --- !u!1 &1097449400
@@ -1536,7 +1536,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Speed: 10
-  m_RotSpeed: 40
+  m_RotSpeed: 60
   m_FallSpeed: 1
 --- !u!136 &1702568872
 CapsuleCollider:
