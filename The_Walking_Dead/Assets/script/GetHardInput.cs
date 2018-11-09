@@ -23,9 +23,15 @@ public class GetHardInput : MonoBehaviour {
         if(Input.GetKeyDown(KeyCode.Escape) || Input.GetMouseButtonDown(0))
         {
             if (Cursor.lockState == CursorLockMode.Locked)
+            {
                 Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
+            }
             else
+            {
                 Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
+            }
         }
     }
 }

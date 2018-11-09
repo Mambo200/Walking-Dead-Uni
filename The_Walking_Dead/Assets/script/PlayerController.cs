@@ -20,6 +20,9 @@ public class PlayerController : MonoBehaviour {
     [Tooltip("player rotation speed")]
     /// <summary>player rotation speed</summary>
     public float m_RotSpeed = 1;
+    [Tooltip("player fall speed")]
+    /// <summary>fall speed of player</summary>
+    public float m_FallSpeed = 1;
     /// <summary>horizontal input</summary>
     private float m_Horizontal;
     /// <summary>vertical input</summary>
@@ -32,7 +35,10 @@ public class PlayerController : MonoBehaviour {
     // Use this for initialization
     void Start ()
     {
+        // lock mouse
         Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+        // get character controller
         m_CharacterController = this.gameObject.GetComponent<CharacterController>();
 	}
 	
@@ -57,26 +63,33 @@ public class PlayerController : MonoBehaviour {
     }
 
     // ------------------------------------------------------------------------------------------- \\
-
+    #region Player Movement
     /// <summary>
     /// Move Character
     /// </summary>
     void Move()
     {
-        Move(m_Horizontal, m_Vertical);
+        // check if player is grounded
+        if (m_CharacterController.isGrounded)
+            // do not fall
+            Move(m_Horizontal, m_Vertical, 0);
+        else
+            // fall
+            Move(m_Horizontal, m_Vertical, m_FallSpeed);
     }
 
     /// <summary>
-    /// Move Character
+    /// Move Character to x- and z-Axis
     /// </summary>
     /// <param name="_horizontal">horizontal input</param>
     /// <param name="_vertical">vertical input</param>
-    void Move(float _horizontal, float _vertical)
+    void Move(float _horizontal, float _vertical, float _jump)
     {
         Vector3 v = new Vector3();
         float speed = m_Speed * Time.deltaTime;
         // set vector
         v.x = _horizontal;
+        v.y = - _jump;
         v.z = _vertical;
 
         // multiply by speed and Run
@@ -105,6 +118,7 @@ public class PlayerController : MonoBehaviour {
             return 1;
     }
 
+    #endregion
     /// <summary>
     /// Rotate Player
     /// </summary>

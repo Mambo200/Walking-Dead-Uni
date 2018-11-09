@@ -15,9 +15,6 @@ public class ChangeText : MonoBehaviour {
 	// Use this for initialization
 	void Start ()
     {
-        //// get gameobject
-        //m_WinDeadText = GameObject.Find("WinDieText");
-        // set color to default
         mP_WinDeadText.GetComponent<Text>().color = Color.white;
     }
 

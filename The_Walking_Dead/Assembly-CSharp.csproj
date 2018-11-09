@@ -66,6 +66,7 @@
     <Compile Include="Assets\script\GetHardInput.cs" />
     <Compile Include="Assets\script\PlayerCollision.cs" />
     <Compile Include="Assets\script\PlayerController.cs" />
+    <Compile Include="Assets\script\SpawnTombStones.cs" />
     <Compile Include="Assets\script\SpawnZombies.cs" />
     <Compile Include="Assets\script\ZombieBehaviour.cs" />
     <Reference Include="UnityEditor.StandardEvents">
