@@ -61,11 +61,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\GetDoorCube.cs" />
     <Compile Include="Assets\script\CameraRotation.cs" />
     <Compile Include="Assets\script\ChangeText.cs" />
     <Compile Include="Assets\script\GetHardInput.cs" />
     <Compile Include="Assets\script\PlayerCollision.cs" />
     <Compile Include="Assets\script\PlayerController.cs" />
+    <Compile Include="Assets\script\PressurePlateTrigger.cs" />
     <Compile Include="Assets\script\SpawnTombStones.cs" />
     <Compile Include="Assets\script\SpawnZombies.cs" />
     <Compile Include="Assets\script\ZombieBehaviour.cs" />
