@@ -6,6 +6,10 @@ TagManager:
   tags:
   - Enemy
   - SaveZone
+  - WallFront
+  - WallRight
+  - WallLeft
+  - WallBack
   layers:
   - Default
   - TransparentFX

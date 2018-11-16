@@ -56,7 +56,6 @@ public class PressurePlateTrigger : MonoBehaviour {
             {
                 m_TriggerTimer = m_PlateActivateTimer;
                 m_Activate = !m_Activate;
-                Debug.Log(m_Activate);
             }
             // reset Trigger Timer
             else

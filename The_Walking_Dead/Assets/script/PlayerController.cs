@@ -118,7 +118,6 @@ public class PlayerController : MonoBehaviour {
             return 1;
     }
 
-    #endregion
     /// <summary>
     /// Rotate Player
     /// </summary>
@@ -136,6 +135,7 @@ public class PlayerController : MonoBehaviour {
             );
 
     }
+    #endregion
 
     #region Public Static Functions
     /// <summary>
@@ -201,5 +201,39 @@ public class PlayerController : MonoBehaviour {
             m_Save = false;
     }
     #endregion
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        // if collided with enemy
+        if (collision.collider.tag == "Enemy")
+        {
+
+            // when player is already dead skip
+            if (m_Dead == false)
+            {
+
+                // when player is not safe
+                if (!PlayerSave())
+                {
+                    // set player status to dead
+                    m_Dead = true;
+
+                    // change UI Text
+                    ChangeText.ChangeTextBox(ChangeText.TextDead, Color.red);
+
+                    // Get Camera
+                    GameObject c = GameObject.Find("Main Camera");
+
+                    // set position above player
+                    c.transform.position = new Vector3(c.transform.position.x, c.transform.position.y + 50, c.transform.position.z);
+
+                    // set rotation
+                    c.transform.rotation = Quaternion.Euler(90, 0, 0);
+                } // End !PlayerSave()
+
+            } // End m_Dead == false
+
+        } // End collision.collider.tag == "Enemy"
+    }
 
 }
