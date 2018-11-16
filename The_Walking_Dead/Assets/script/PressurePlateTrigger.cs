@@ -10,17 +10,18 @@ public class PressurePlateTrigger : MonoBehaviour {
     [Tooltip("The Time when the pressure plate can be activated again")]
     /// <summary>The Time when the pressure plate can be activated again</summary>
     public float m_PlateActivateTimer;
+    [Tooltip("Door which shall move")]
+    /// <summary>door gameobject</summary>
+    public GameObject m_Door;
     /// <summary>changes when enter triggerzone</summary>
     bool m_Activate = false;
-    /// <summary>Transform of the door</summary>
-    Transform m_Door;
     /// <summary>trigger time which decreases every frame</summary>
     float m_TriggerTimer;
 
     // Use this for initialization
     void Start ()
     {
-        m_Door = GetDoorCube.m_DoorCube;        
+
 	}
 	
 	// Update is called once per frame
@@ -102,12 +103,11 @@ public class PressurePlateTrigger : MonoBehaviour {
     }
 
     /// <summary>
-    /// Set the position of the Door.
+    /// Set the position of the Door. calculate position with speed before using
     /// </summary>
-    /// <param name="_zPosition">The z position.</param>
+    /// <param name="_zPosition">The z position WITH SPEED.</param>
     private void SetPosition(float _zPosition)
     {
-        Debug.Log("Ausgeführt");
         m_Door.gameObject.transform.localPosition = new Vector3(0, 0, _zPosition);
     }
 }

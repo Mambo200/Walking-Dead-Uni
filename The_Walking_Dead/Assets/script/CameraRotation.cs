@@ -10,9 +10,15 @@ public class CameraRotation : MonoBehaviour {
 
     /// <summary>cursor movement</summary>
     private float MouseY;
-	
-	// Update is called once per frame
-	void Update ()
+
+    private void Start()
+    {
+        //reset rotation to default
+        this.gameObject.transform.eulerAngles = new Vector3(0, 0, 0);
+    }
+
+    // Update is called once per frame
+    void Update ()
     {
         // if player dies or won return
         if (PlayerController.GameOver())
