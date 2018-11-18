@@ -278,17 +278,17 @@ public class ZombieBehaviour : MonoBehaviour
         float moveX = m_ZombieSpeed * Time.deltaTime;
         float moveZ = m_ZombieSpeed * Time.deltaTime;
 
-        // check x coordinate
-        if (this.gameObject.transform.position.x < -95f)
-            move_TurnXZ[0] = true;
-        else if (this.gameObject.transform.position.x > 95f)
-            move_TurnXZ[0] = false;
-
-        // check z coordinate
-        if (this.gameObject.transform.position.z < -95f)
-            move_TurnXZ[1] = true;
-        else if (this.gameObject.transform.position.z > 95f)
-            move_TurnXZ[1] = false;
+        //// check x coordinate
+        //if (this.gameObject.transform.position.x < -95f)
+        //    move_TurnXZ[0] = true;
+        //else if (this.gameObject.transform.position.x > 95f)
+        //    move_TurnXZ[0] = false;
+        //
+        //// check z coordinate
+        //if (this.gameObject.transform.position.z < -95f)
+        //    move_TurnXZ[1] = true;
+        //else if (this.gameObject.transform.position.z > 95f)
+        //    move_TurnXZ[1] = false;
 
         // change directions random
         move_SaveTime += Time.deltaTime;
@@ -440,7 +440,8 @@ public class ZombieBehaviour : MonoBehaviour
         #endregion
 
         #region SaveZone
-        if (other.tag == "nix")
+        // if Zombie enters Savearea destroy it
+        if (other.tag == "SaveZone")
         {
             // get parent GameObject
             GameObject p = transform.parent.gameObject;
@@ -453,23 +454,28 @@ public class ZombieBehaviour : MonoBehaviour
         }
         #endregion
 
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
         #region Walls
-        if (other.tag == "WallFront")
+        if (collision.transform.tag == "WallFront")
         {
             TurnAround(0);
         }
-        else if (other.tag == "WallRight")
+        else if (collision.transform.tag == "WallRight")
         {
             TurnAround(1);
         }
-        else if (other.tag == "WallLeft")
+        else if (collision.transform.tag == "WallLeft")
         {
             TurnAround(2);
         }
-        else if (other.tag == "WallBack")
+        else if (collision.transform.tag == "WallBack")
         {
             TurnAround(3);
         }
         #endregion
+
     }
 }
