@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class ZombieBehaviour : MonoBehaviour
 {
+    // Count Zombies
+    static int m_ZombieCount;
+    /// <summary>Zombiecount Propertie</summary>
+    static int ZombieCount { get { return m_ZombieCount; } set { m_ZombieCount = value; Debug.Log(m_ZombieCount); } }
 
     [Tooltip("Speed of Zombie")]
     /// <summary>speed of Zombie</summary>
@@ -67,6 +71,9 @@ public class ZombieBehaviour : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        // add one to Zombie Counter
+        ZombieCount++;
+
         // Set additional Zombie Speed
         // If Additional speed = 0, set random number
         if (m_AdditionalSpeed == 0)
@@ -80,6 +87,11 @@ public class ZombieBehaviour : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // DELETE
+        if(Input.GetKeyDown(KeyCode.X))
+        {
+            TurnAround(5);
+        }
         // if player is dead stop Zombie movement
         if (PlayerController.GameOver())
             return;
@@ -304,6 +316,84 @@ public class ZombieBehaviour : MonoBehaviour
             ));
     }
 
+
+    #region Turn Functions
+    /// <summary>
+    /// When collided with front wall Zombie move to another direction
+    /// </summary>
+    /// <param name="_wall">0 = front, 1 = right, 2 = left, 3 = back</param>
+    private void TurnAround(int _wall)
+    {
+        switch (_wall)
+        {
+            case 0:
+                TurnAroundWallFront();
+                break;
+            case 1:
+                TurnAroundWallRight();
+                break;
+            case 2:
+                TurnAroundWallLeft();
+                break;
+            case 3:
+                TurnAroundWallBack();
+                break;
+            default:
+                throw new System.IndexOutOfRangeException();
+                break;
+        }
+        /* vordere Wand (xz)
+         * vorher ++, danach +-
+         * vorher -+, danach --
+         * 
+         * rechte Wand
+         * vorher -+, danach ++
+         * vorher --, danach +- --
+         * 
+         * linke Wand
+         * vorher ++, danach -+
+         * vorher +-, danach --
+         * 
+         * hintere Wand
+         * vorher +-, danach ++
+         * vorher --, danach -+
+         */
+
+    }
+
+    /// <summary>
+    /// change move direction when hit front wall
+    /// </summary>
+    private void TurnAroundWallFront()
+    {
+        move_TurnXZ[1] = false;
+    }
+    
+    /// <summary>
+    /// change move direction when hit right wall
+    /// </summary
+    private void TurnAroundWallRight()
+    {
+        move_TurnXZ[0] = true;
+    }
+
+    /// <summary>
+    /// change move direction when hit left wall
+    /// </summary>
+    private void TurnAroundWallLeft()
+    {
+        move_TurnXZ[0] = false;
+    }
+
+    /// <summary>
+    /// change move direction when hit back wall
+    /// </summary>
+    private void TurnAroundWallBack()
+    {
+        move_TurnXZ[1] = true;
+    }
+    #endregion
+
     /// <summary>
     /// Change Color of Body
     /// </summary>
@@ -316,4 +406,70 @@ public class ZombieBehaviour : MonoBehaviour
             m_Material.CopyPropertiesFromMaterial(m_ZombieColor[_index]);
     }
 
+
+    /// <summary>
+    /// When Object gets destroyed
+    /// </summary>
+    private void OnDestroy()
+    {
+        ZombieCount--;
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        #region Player
+        if (other.tag == "Player")
+            // check is player is in save area
+            if (!PlayerController.PlayerSave())
+            {
+                // set player status to dead
+                PlayerController.m_Dead = true;
+
+                // change UI Text
+                ChangeText.ChangeTextBox(ChangeText.TextDead, Color.red);
+
+                // Get Camera
+                GameObject c = GameObject.Find("Main Camera");
+
+                // set position above player
+                c.transform.position = new Vector3(c.transform.position.x, c.transform.position.y + 50, c.transform.position.z);
+
+                // set rotation
+                c.transform.rotation = Quaternion.Euler(90, 0, 0);
+            }
+        #endregion
+
+        #region SaveZone
+        if (other.tag == "nix")
+        {
+            // get parent GameObject
+            GameObject p = transform.parent.gameObject;
+            // set parent to null
+            transform.parent = null;
+            // destroy parent Gameobject
+            Destroy(p);
+            // destroy Body
+            Destroy(this.gameObject);
+        }
+        #endregion
+
+        #region Walls
+        if (other.tag == "WallFront")
+        {
+            TurnAround(0);
+        }
+        else if (other.tag == "WallRight")
+        {
+            TurnAround(1);
+        }
+        else if (other.tag == "WallLeft")
+        {
+            TurnAround(2);
+        }
+        else if (other.tag == "WallBack")
+        {
+            TurnAround(3);
+        }
+        #endregion
+    }
 }
