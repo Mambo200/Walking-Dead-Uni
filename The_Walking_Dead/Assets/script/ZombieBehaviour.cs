@@ -5,9 +5,21 @@ using UnityEngine;
 public class ZombieBehaviour : MonoBehaviour
 {
     // Count Zombies
-    static int m_ZombieCount;
+    private static int m_ZombieCount;
     /// <summary>Zombiecount Propertie</summary>
-    static int ZombieCount { get { return m_ZombieCount; } set { m_ZombieCount = value; Debug.Log(m_ZombieCount); } }
+    public static int ZombieCount
+    {
+        get
+        {
+            return m_ZombieCount;
+        }
+        set
+        {
+            m_ZombieCount = value;
+            if(!showZombieCountStatic)
+            Debug.Log(m_ZombieCount);
+        }
+    }
 
     [Tooltip("Speed of Zombie")]
     /// <summary>speed of Zombie</summary>
@@ -51,6 +63,13 @@ public class ZombieBehaviour : MonoBehaviour
     /// <summary>Time gone since lase save</summary>
     private float move_SaveTime = 0;
 
+    [Header("Debug")]
+    // static version of showZombieCount
+    private static bool showZombieCountStatic = false;
+    [Tooltip("when activated zombiecount will show up in debug log")]
+    // when activated zombiecount will show up in debug log
+    public bool showZombieCount = false;
+
     void Awake()
     {
         // get body of Zombie
@@ -87,11 +106,7 @@ public class ZombieBehaviour : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // DELETE
-        if(Input.GetKeyDown(KeyCode.X))
-        {
-            TurnAround(5);
-        }
+        showZombieCountStatic = showZombieCount;
         // if player is dead stop Zombie movement
         if (PlayerController.GameOver())
             return;
@@ -439,17 +454,20 @@ public class ZombieBehaviour : MonoBehaviour
             }
         #endregion
 
-        #region SaveZone
+        #region SaveZone / End
         // if Zombie enters Savearea destroy it
-        if (other.tag == "SaveZone")
+        if (other.tag == "SaveZone" || other.tag == "Finish")
         {
+
+            #region if this is Body
             // get parent GameObject
-            GameObject p = transform.parent.gameObject;
+            //GameObject p = transform.parent.gameObject;
             // set parent to null
-            transform.parent = null;
+            //transform.parent = null;
             // destroy parent Gameobject
-            Destroy(p);
-            // destroy Body
+            //Destroy(p);
+            #endregion
+            // destroy Gameobject
             Destroy(this.gameObject);
         }
         #endregion

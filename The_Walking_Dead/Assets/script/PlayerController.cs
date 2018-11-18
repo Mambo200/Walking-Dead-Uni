@@ -227,6 +227,9 @@ public class PlayerController : MonoBehaviour {
                     // set position above player
                     c.transform.position = new Vector3(c.transform.position.x, c.transform.position.y + 50, c.transform.position.z);
 
+                    // make zombie bigger to see from which zombie player got hit
+                    collision.transform.localScale = new Vector3(this.transform.localScale.x, this.transform.localScale.y, this.transform.localScale.z);
+
                     // set rotation
                     c.transform.rotation = Quaternion.Euler(90, 0, 0);
                 } // End !PlayerSave()
