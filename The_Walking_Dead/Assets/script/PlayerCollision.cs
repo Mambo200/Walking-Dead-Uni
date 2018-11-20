@@ -31,7 +31,7 @@ public class PlayerCollision : MonoBehaviour {
                 PlayerController.m_Dead = true;
 
                 // change UI Text
-                ChangeText.ChangeTextBox(ChangeText.TextDead, Color.red);
+                ChangeText.ChangeTextBoxWinDead(ChangeText.TextDead, Color.red);
 
                 // Get Camera
                 GameObject c = GameObject.Find("Main Camera");
