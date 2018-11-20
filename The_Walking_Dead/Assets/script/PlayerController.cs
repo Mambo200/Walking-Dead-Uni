@@ -13,6 +13,19 @@ public class PlayerController : MonoBehaviour {
     [HideInInspector]
     /// <summary>when Player reached finish</summar>
     public static bool m_Won = false;
+    /// <summary>Lives of Player</summar>
+    public static int Lives
+    {
+        get {return m_Lives;}
+        set
+        {
+            m_Lives = value;
+            ChangeText.ChangeTextBoxLives(m_Lives);
+        }
+    }
+
+    /// <summary>Coins of Player</summar>
+    public static int Coins { get { return m_Coins; } set { m_Coins = value; } }
 
     [Tooltip("player walk speed")]
     /// <summary>player walk speed</summary>
@@ -29,6 +42,10 @@ public class PlayerController : MonoBehaviour {
     private float m_Vertical;
     /// <summary>Mouse X input</summary>
     private float m_RotationY;
+    /// <summary>Lives of Player</summary>
+    private static int m_Lives;
+    /// <summary>Coins of Player</summary>
+    private static int m_Coins;
 
     private CharacterController m_CharacterController;
 
@@ -172,21 +189,46 @@ public class PlayerController : MonoBehaviour {
         m_Save = false;
         m_Dead = false;
         m_Won = false;
+
+        // Reset lives and Coins
+        m_Coins = 0;
+        m_Lives = 0;
+
         // change UI Text
-        ChangeText.ChangeTextBox("", Color.white);
+        ChangeText.ChangeTextBoxWinDead("", Color.white);
     }
     #endregion
 
     #region Trigger Events
     private void OnTriggerEnter(Collider other)
     {
+        #region Savezone
         if (other.gameObject.tag == "SaveZone")
             m_Save = true;
         else if (other.gameObject.tag == "Finish")
         {
             m_Won = true;
-            ChangeText.ChangeTextBox(ChangeText.TextWin, Color.green);
+            ChangeText.ChangeTextBoxWinDead(ChangeText.TextWin, Color.green);
         }
+        #endregion
+
+        #region One Up / Coin
+        if(other.gameObject.tag == "Item")
+        {
+            // 1UP
+            if(other.gameObject.name == "1UP")
+            {
+                ++Lives;
+                Destroy(other.gameObject);
+            }
+            // Coin
+            else if(other.gameObject.name == "Coin")
+            {
+                ++m_Coins;
+                Destroy(other.gameObject);
+            }
+        }
+        #endregion
     }
 
     private void OnTriggerStay(Collider other)
@@ -202,6 +244,7 @@ public class PlayerController : MonoBehaviour {
     }
     #endregion
 
+    #region Collision Events
     private void OnCollisionEnter(Collision collision)
     {
         // if collided with enemy
@@ -215,28 +258,40 @@ public class PlayerController : MonoBehaviour {
                 // when player is not safe
                 if (!PlayerSave())
                 {
-                    // set player status to dead
-                    m_Dead = true;
+                    // when player has lives left
+                    if (Lives > 0)
+                    {
+                        --Lives;
+                    }
 
-                    // change UI Text
-                    ChangeText.ChangeTextBox(ChangeText.TextDead, Color.red);
+                    // if player has no lives
+                    else
+                    {
 
-                    // Get Camera
-                    GameObject c = GameObject.Find("Main Camera");
+                        // set player status to dead
+                        m_Dead = true;
 
-                    // set position above player
-                    c.transform.position = new Vector3(c.transform.position.x, c.transform.position.y + 50, c.transform.position.z);
+                        // change UI Text
+                        ChangeText.ChangeTextBoxWinDead(ChangeText.TextDead, Color.red);
 
-                    // make zombie bigger to see from which zombie player got hit
-                    collision.transform.localScale = new Vector3(this.transform.localScale.x, this.transform.localScale.y, this.transform.localScale.z);
+                        // Get Camera
+                        GameObject c = GameObject.Find("Main Camera");
 
-                    // set rotation
-                    c.transform.rotation = Quaternion.Euler(90, 0, 0);
+                        // set position above player
+                        c.transform.position = new Vector3(c.transform.position.x, c.transform.position.y + 50, c.transform.position.z);
+
+                        // make zombie bigger to see from which zombie player got hit
+                        collision.transform.localScale = new Vector3(this.transform.localScale.x, this.transform.localScale.y, this.transform.localScale.z);
+
+                        // set rotation
+                        c.transform.rotation = Quaternion.Euler(90, 0, 0);
+                    }
                 } // End !PlayerSave()
 
             } // End m_Dead == false
 
         } // End collision.collider.tag == "Enemy"
     }
+    #endregion
 
 }
