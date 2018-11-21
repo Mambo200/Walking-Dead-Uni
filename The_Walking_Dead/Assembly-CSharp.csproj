@@ -67,16 +67,17 @@
     <Compile Include="Assets\Download\ProCore\ProBuilder\API Examples\Procedural Mesh\ExtrudeRandomEdges.cs" />
     <Compile Include="Assets\Download\ProCore\ProBuilder\API Examples\Runtime Editing\RuntimeEdit.cs" />
     <Compile Include="Assets\Download\ProCore\ProBuilder\API Examples\Vertex Colors\HighlightNearestFace.cs" />
-    <Compile Include="Assets\NPC_LiveBringer.cs" />
     <Compile Include="Assets\script\CameraRotation.cs" />
     <Compile Include="Assets\script\ChangeText.cs" />
     <Compile Include="Assets\script\CoinRotation.cs" />
     <Compile Include="Assets\script\DestroyList.cs" />
     <Compile Include="Assets\script\GetDoorCube.cs" />
     <Compile Include="Assets\script\GetHardInput.cs" />
-    <Compile Include="Assets\script\PlayerCollision.cs" />
+    <Compile Include="Assets\script\NPC\NPC_KeyBringer.cs" />
+    <Compile Include="Assets\script\NPC\NPC_LiveBringer.cs" />
     <Compile Include="Assets\script\PlayerController.cs" />
     <Compile Include="Assets\script\PressurePlateTrigger.cs" />
+    <Compile Include="Assets\script\SceneTime.cs" />
     <Compile Include="Assets\script\SpawnTombStones.cs" />
     <Compile Include="Assets\script\SpawnZombies.cs" />
     <Compile Include="Assets\script\ZombieBehaviour.cs" />
@@ -85,6 +86,7 @@
     <None Include="Assets\Download\ProCore\ProBuilder\Shader\pb_SelectionPicker.shader" />
     <None Include="Assets\Download\ProCore\ProBuilder\About\changelog.txt" />
     <None Include="Assets\Download\ProCore\ProBuilder\Shader\DiffuseVertexColor.shader" />
+    <None Include="Assets\prefab\Food\archibase.net.txt" />
     <None Include="Assets\Download\ProCore\ProBuilder\Shader\pb_FaceHighlight.shader" />
     <None Include="Assets\Download\ProCore\ProBuilder\Shader\pb_UnlitSolidColor.shader" />
     <None Include="Assets\Download\ProCore\ProBuilder\Shader\pb_ReferenceUnlit.shader" />

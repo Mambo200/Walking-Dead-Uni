@@ -19,7 +19,7 @@ public class GetHardInput : MonoBehaviour {
             // unload Scene
             UnityEngine.SceneManagement.SceneManager.LoadScene("SampleScene");
             // reset Scene Time
-            PlayerCollision.ResetSceneTime = false;
+            SceneTime.ResetSceneTime = true;
             // Load Scene
             PlayerController.Reload();
         }

@@ -6,7 +6,43 @@ public class PlayerController : MonoBehaviour {
 
     [HideInInspector]
     /// <summary>if player collides with Zombie -> Dead = true</summary>
-    public static bool m_Dead = false;
+    public static bool Dead
+    {
+        get
+        {
+            return m_Dead;
+        }
+        set
+        {
+            if (!value)
+            {
+                m_Dead = value;
+                m_DeadResetTimer = 0;
+                return;
+            }
+
+            if(Lives>0)
+            {
+                --Lives;
+                m_DeadResetTimer = 0;
+            }
+            else
+            {
+                // set player status to dead
+                m_Dead = true;
+               
+                // change UI Text
+                ChangeText.ChangeTextBoxWinDead(ChangeText.TextDead, Color.red);
+
+            }
+
+        }
+    }
+    private static bool m_Dead = false;
+
+    /// <summary>Resets time after respawn</summary>
+    private static float m_DeadResetTimer;
+
     [HideInInspector]
     /// <summary>when Player is in Save Zone m_Save is true</summary>
     public static bool m_Save = false;
@@ -26,6 +62,21 @@ public class PlayerController : MonoBehaviour {
 
     /// <summary>Coins of Player</summar>
     public static int Coins { get { return m_Coins; } set { m_Coins = value; } }
+    /// <summary>Amount of Food of Player</summary>
+    public static int Food { get { return m_Food; } set { m_Food = value; } }
+    /// <summary>Key which is needed to complete the game</summary>
+    public static bool Key
+    {
+        get
+        {
+            return m_Key;
+        }
+        set
+        {
+            m_Key = value;
+            ChangeText.ChangeKeyImage(true);
+        }
+    }
 
     [Tooltip("player walk speed")]
     /// <summary>player walk speed</summary>
@@ -42,10 +93,16 @@ public class PlayerController : MonoBehaviour {
     private float m_Vertical;
     /// <summary>Mouse X input</summary>
     private float m_RotationY;
+
+    // Items
     /// <summary>Lives of Player</summary>
     private static int m_Lives;
     /// <summary>Coins of Player</summary>
     private static int m_Coins;
+    /// <summary>Amount of Food of Player</summary>
+    private static int m_Food;
+    /// <summary>Key which is needed to complete the game</summary>
+    private static bool m_Key;
 
     private CharacterController m_CharacterController;
 
@@ -62,9 +119,22 @@ public class PlayerController : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
     {
+        // if respawn dead timer < 5 return
+        if (m_DeadResetTimer <= 5f)
+        {
+            m_Save = true;
+        }
+        else
+        {
+            m_Save = false;
+        }
+
         // if player is dead or won return
         if (m_Dead || m_Won)
             return;
+
+        // update Respawn Timer
+        m_DeadResetTimer += Time.deltaTime;
 
         // Move
         // get Axis input
@@ -202,33 +272,75 @@ public class PlayerController : MonoBehaviour {
     #region Trigger Events
     private void OnTriggerEnter(Collider other)
     {
+        #region Savezones
+
         #region Savezone
         if (other.gameObject.tag == "SaveZone")
             m_Save = true;
-        else if (other.gameObject.tag == "Finish")
-        {
-            m_Won = true;
-            ChangeText.ChangeTextBoxWinDead(ChangeText.TextWin, Color.green);
-        }
         #endregion
 
-        #region One Up / Coin
+        #region Finish
+        else if (other.gameObject.tag == "Finish")
+        {
+            // If player has key
+            if (Key)
+            {
+                m_Won = true;
+                ChangeText.ChangeTextBoxWinDead(ChangeText.TextWin, Color.green);
+            }
+
+            // if player dont have key
+            else
+            {
+                ChangeText.ChangeTextBoxWinDead("Key is Missing!", Color.red);
+            }
+        } 
+        #endregion
+
+        #endregion
+
+        #region Item
         if(other.gameObject.tag == "Item")
         {
+            #region One Up
             // 1UP
-            if(other.gameObject.name == "1UP")
+            if (other.gameObject.name == "1UP")
             {
                 ++Lives;
                 Destroy(other.gameObject);
             }
+            #endregion
+
+            #region Coin
             // Coin
-            else if(other.gameObject.name == "Coin")
+            else if (other.gameObject.name == "Coin")
             {
                 ++m_Coins;
                 Destroy(other.gameObject);
             }
+            #endregion
+
+            #region Key
+            // Key
+            else if (other.gameObject.name == "Key")
+            {
+                Key = true;
+                Destroy(other.gameObject);
+            }
+            #endregion
+
+            #region Food
+            else if(other.gameObject.name == "Food")
+            {
+                ++m_Food;
+                Destroy(other.gameObject);
+            }
+            #endregion
+
         }
         #endregion
+
+
     }
 
     private void OnTriggerStay(Collider other)
@@ -241,6 +353,12 @@ public class PlayerController : MonoBehaviour {
     {
         if (other.gameObject.tag == "SaveZone")
             m_Save = false;
+
+        if (other.gameObject.tag == "Finish")
+        {
+            ChangeText.ChangeTextBoxWinDead("", Color.black);
+        }
+
     }
     #endregion
 
@@ -258,21 +376,17 @@ public class PlayerController : MonoBehaviour {
                 // when player is not safe
                 if (!PlayerSave())
                 {
-                    // when player has lives left
+                    // if player has lives
                     if (Lives > 0)
                     {
-                        --Lives;
-                    }
+                        Dead = true;
+                        this.gameObject.transform.localPosition = new Vector3(0, 20f, 0);
 
-                    // if player has no lives
+                    }
+                    // player has no lives
                     else
                     {
-
-                        // set player status to dead
-                        m_Dead = true;
-
-                        // change UI Text
-                        ChangeText.ChangeTextBoxWinDead(ChangeText.TextDead, Color.red);
+                        Dead = true;
 
                         // Get Camera
                         GameObject c = GameObject.Find("Main Camera");
@@ -286,6 +400,7 @@ public class PlayerController : MonoBehaviour {
                         // set rotation
                         c.transform.rotation = Quaternion.Euler(90, 0, 0);
                     }
+
                 } // End !PlayerSave()
 
             } // End m_Dead == false
