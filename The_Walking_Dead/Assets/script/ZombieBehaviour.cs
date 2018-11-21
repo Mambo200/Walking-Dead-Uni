@@ -432,27 +432,6 @@ public class ZombieBehaviour : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        #region Player
-        if (other.tag == "Player")
-            // check is player is in save area
-            if (!PlayerController.PlayerSave())
-            {
-                // set player status to dead
-                PlayerController.m_Dead = true;
-
-                // change UI Text
-                ChangeText.ChangeTextBoxWinDead(ChangeText.TextDead, Color.red);
-
-                // Get Camera
-                GameObject c = GameObject.Find("Main Camera");
-
-                // set position above player
-                c.transform.position = new Vector3(c.transform.position.x, c.transform.position.y + 50, c.transform.position.z);
-
-                // set rotation
-                c.transform.rotation = Quaternion.Euler(90, 0, 0);
-            }
-        #endregion
 
         #region SaveZone / End
         // if Zombie enters Savearea destroy it
